@@ -7,6 +7,7 @@
 #    #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
 #
 #         See: https://github.com/novusnota/notes.sh
+#                     Version: 1.0.1
 #
 # Create a dated text file at a specific location and append text to it.
 #
@@ -56,13 +57,13 @@ readonly NOTES_FORMAT='.md'
 # EDIT: Remove this section, if you've already set EDITOR, or don't want to use (Neo)Vim.
 #              vvvv
 ##
-vimVariant='nvim'
+vimDerivative='nvim'
 
 if [ -z "$(which nvim)" ]; then
     if [ -z "$(which vim)" ]; then
-        vimVariant='vi'
+        vimDerivative='vi'
     else
-        vimVariant='vim'
+        vimDerivative='vim'
     fi
 fi
 
@@ -77,7 +78,7 @@ readonly NOTES_EDITOR="${EDITOR:-"$vimVariant"}"
 # To check the contents of the HOME variable:
 # echo $HOME
 ##
-readonly NOTES_CUSTOM_DIRECTORY="${HOME}/LECS/notes/${NOTES_Y}/${NOTES_D}"
+readonly NOTES_CUSTOM_DIRECTORY="${HOME}/LECS/notes/${NOTES_Y}/${NOTES_M}"
 readonly NOTES_DIRECTORY="${NOTES_DIRECTORY:-"$NOTES_CUSTOM_DIRECTORY"}"
 
 ##
@@ -96,7 +97,7 @@ if [ ! -d "${NOTES_DIRECTORY}" ]; then
             [Yy]* ) mkdir -p "${NOTES_DIRECTORY}"; break;;
             [Nn]* ) exit;;
             * ) echo "Please answer y or n";;
-        esac~
+        esac
     done
 fi
 
