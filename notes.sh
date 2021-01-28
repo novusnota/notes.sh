@@ -51,7 +51,7 @@ readonly NOTES_D="${NOTES_DATE[2]}"
 ##
 # EDIT: Change this to your favourite text file format
 ##
-readonly NOTES_FORMAT='.md'
+readonly NOTES_FORMAT='md'
 
 ##
 # EDIT: Remove this section, if you've already set EDITOR, or don't want to use (Neo)Vim.
@@ -67,7 +67,7 @@ if [ -z "$(which nvim)" ]; then
     fi
 fi
 
-readonly NOTES_EDITOR="${EDITOR:-"$vimVariant"}"
+readonly NOTES_EDITOR="${EDITOR:-"$vimDerivative"}"
 ##
 #              ^^^^
 # EDIT: Remove this section, if you've already set EDITOR, or don't want to use (Neo)Vim.
@@ -110,6 +110,39 @@ prefix='\n---\n'
 if [ $(cat "${NOTES_PATH}" | grep -c '\S') -lt 1 ]; then
     prefix=''
 fi
+
+##
+# Debugging section
+#           vvvvvvv
+##
+echoList() {
+    local args=("$@")
+    for arg in "${args[@]}"; do
+        echo "$arg"
+    done
+}
+
+logAndExit() {
+    echoList \
+        "Directory: $NOTES_DIRECTORY" \
+        "File: $NOTES_FILE" \
+        "Format: $NOTES_FORMAT" \
+        "Path: $NOTES_PATH" \
+        "Editor: $NOTES_EDITOR" \
+       "Prefix: $prefix"
+    exit 0
+}
+
+# Print out most of variables to visually
+# check their values and exit before
+# trying to write a note somewhere
+# (not an autotest, I know :)
+#logAndExit
+
+##
+#           ^^^^^^^
+# Debugging section
+##
 
 ##
 # Try to get arguments from stdin and append them OR launch an editor directly
