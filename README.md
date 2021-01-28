@@ -1,15 +1,13 @@
 <div align="center">
   <h1 style="border-bottom: none !important;">📝 notes.sh</h1>
   <p>
-<pre><code>
-
+<pre>
                 m                                #    
 m mm    mmm   mm#mm   mmm    mmm           mmm   # mm 
 #"  #  #" "#    #    #"  #  #   "         #   "  #"  #
 #   #  #   #    #    #""""   """m          """m  #   #
 #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
-
-</code></pre>
+</pre>
   </p>
   <h2 style="border-bottom: none !important;">
     🐧 Super-simple small bash (shell) script with zero dependencies,
