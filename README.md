@@ -9,10 +9,6 @@ m mm    mmm   mm#mm   mmm    mmm           mmm   # mm
 #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
 </pre>
   </p>
-  <h2 style="border-bottom: none !important;">
-    🐧 Super-simple small bash (shell) script with zero dependencies,
-    which manages notes with ease and grace of a terminal.
-  </h2>
   <a target="_blank" href="https://www.gnu.org/software/bash/">
     <img
       src="https://img.shields.io/badge/Made%20with-Bash-1f425f.svg"
@@ -31,10 +27,15 @@ m mm    mmm   mm#mm   mmm    mmm           mmm   # mm
 
 </div>
 
+## 🐧 About
+
+Super-simple small bash (shell) script with zero dependencies,
+which manages notes with ease and grace of a terminal.
+
 Create a dated text file at a specific location and append text to it. It's that simple!
 
 Works literally on every Linux-like system. And probably should work on MacOS.
-If not, please open an issue.
+If not, please open an [issue](https://github.com/novusnota/notes.sh/issues).
 
 ## 🤟 Getting Started
 
