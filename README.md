@@ -1,20 +1,20 @@
 <div align="center">
-  <h1 style="border-bottom: none !important;">🐧📝 notes.sh</h1>
+  <h1 style="border-bottom: none !important;">📝 notes.sh</h1>
   <p>
-    <pre>
-                m                                #
-m mm    mmm   mm#mm   mmm    mmm           mmm   # mm
+<pre><code>
+
+                m                                #    
+m mm    mmm   mm#mm   mmm    mmm           mmm   # mm 
 #"  #  #" "#    #    #"  #  #   "         #   "  #"  #
 #   #  #   #    #    #""""   """m          """m  #   #
 #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
-    </pre>
+
+</code></pre>
   </p>
   <h2 style="border-bottom: none !important;">
-    Super-simple small bash (shell) script with zero dependencies,
+    🐧 Super-simple small bash (shell) script with zero dependencies,
     which manages notes with ease and grace of a terminal.
   </h2>
-  [![made-with-Markdown](https://img.shields.io/badge/Made%20with-Markdown-1f425f.svg)](http://commonmark.org)
-  [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/)
   <a target="_blank" href="https://www.gnu.org/software/bash/">
     <img
       src="https://img.shields.io/badge/Made%20with-Bash-1f425f.svg"
