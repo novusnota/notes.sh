@@ -35,6 +35,9 @@
 # mmmmmmmmm Feel free to edit anything tagged 'EDIT:' mmmmmmmmm
 #
 
+# TODO: Somehow shield (\) ', ", (), [], `, !, and other stuff.
+# Bash does that even before the args are passed into the script, so idk.
+
 ##
 # Stopping at the first error
 ##
@@ -106,6 +109,8 @@ fi
 # If so, clean up and remember not to add an '---' prefix before the note itself,
 # because it would be a first note in the file
 ##
+touch "${NOTES_PATH}"  # Update the time stamp and create a file, if it's missing.
+
 prefix='\n---\n'
 if [ $(cat "${NOTES_PATH}" | grep -c '\S') -lt 1 ]; then
     prefix=''
@@ -163,3 +168,7 @@ fi
 # Proceed to: https://github.com/novusnota/notes.sh
 ##
 
+# TODO: Be aware, that )('"!` are not escaped by default just because bash
+# handles args before they get into the script. Possible fix: ncurses.
+# TODO: Auto-find links (by regex) and change them
+# from <space>link<space> to <space>[](link)<space>
