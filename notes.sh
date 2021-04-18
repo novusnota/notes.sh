@@ -7,7 +7,7 @@
 #    #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
 #
 #         See: https://github.com/novusnota/notes.sh
-#                     Version: 2.0.1
+#                     Version: 2.0.2
 #
 # Create a dated text file at a specific location and append text to it.
 #
