@@ -7,7 +7,7 @@
 #    #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
 #
 #         See: https://github.com/novusnota/notes.sh
-#                     Version: 2.0.0
+#                     Version: 2.0.1
 #
 # Create a dated text file at a specific location and append text to it.
 #
@@ -242,7 +242,7 @@ C_NOTES_TEMPLATE="template"
 # If configuration exists, use it
 ##
 
-# (change only if you know, what you're doing)
+# (CHANGE ONLY IF YOU KNOW, WHAT YOU'RE DOING)
 C_NOTES_CONFIG="config.sh"
 
 if [ -f "${C_NOTES_CONFIG}" ]; then

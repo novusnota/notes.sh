@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # (IMPORTANT) Top-level directory for all the notes
-export C_NOTES_DIR="${HOME}/Notes"
+export C_NOTES_DIR="${HOME}/LECS/notes"
 
 # (IMPORTANT) Use an editor to change today's note file manually
-export C_NOTES_EDITOR="vi"
+export C_NOTES_EDITOR="nvim"
 
 # (optional) Delimiter between the separated notes inside today's note file
 export C_NOTES_DELIMITER="\n---\n"
@@ -20,7 +20,4 @@ export C_NOTES_FORMAT="md"
 
 # (optional) A /path/to/template file for the new notes
 export C_NOTES_TEMPLATE="template"
-
-# (CHANGE ONLY IF YOU KNOW, WHAT YOU'RE DOING)
-export C_NOTES_CONFIG="config.sh"
 
