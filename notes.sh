@@ -7,168 +7,380 @@
 #    #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
 #
 #         See: https://github.com/novusnota/notes.sh
-#                     Version: 1.0.1
+#                     Version: 2.0.0
 #
 # Create a dated text file at a specific location and append text to it.
 #
-# Installing:
+# NOTE (unintended pun):
+#   Some features, such as: custom note creation template
+#   or dynamic folder resolution rely on git installed
+#   and on a .git folder inside of this repo.
+#
+# Ways of installation:
 #   1. Just place it somewhere and add an alias:
 #
-#        alias note='path/to/somethere/with/notes.sh'
+#        alias note='path/to/somewhere/with/notes.sh'
 #
-#   2. Place it somewhere in your path with the name 'note':
+#   2. Create a symbolic link somewhere on your PATH.
+#      For example, let's use /usr/local/sbin/:
 #
-#        mv notes.sh ~/.local/bin/note
-#      or
-#        sudo mv notes.sh /usr/local/sbin/note
+#        sudo ln -s /path/to/this/folder's/notes.sh /usr/local/sbin/note
 #
-# Usage:
+# Usage examples:
 #   $ note something you want to write down (appends that text to the file)
 #   $ xsel -bo | note                       (appends your clipboard to the file)
 #   $ note                                  (opens the file in your editor)
 #
+#   pb-paste, xclip, tmux-copy-paste or clip can easily be used instead of xsel.
+#
 # Produces:
-#   DD.md in your $NOTES_DIRECTORY/YYYY/MM (this is set below).
+#   DD.md inside $HOME/Notes/YYYY/MM
 #
-# -------------------------------------------------------------
+#   Destination folder can be changed using a configuration file, see Customization below.
 #
-# mmmmmmmmm Feel free to edit anything tagged 'EDIT:' mmmmmmmmm
+# Customization:
+#   Set the variables of config.sh to your liking.
 #
+#   C_NOTES_DIR (/path/to/notes/directory) — Top-level directory for all the notes
+# 
+#   C_NOTES_EDITOR (nvim, nano, sublime, whatever) — Use an editor to change today's note file manually
+# 
+#   C_NOTES_DELIMITER (\n---\n, for example) Delimiter between the separated notes inside today's note file
+#
+#   C_NOTES_Y_SUBDIR (true/false) — Create a %Year% subfolder for the notes?
+# 
+#   C_NOTES_M_SUBDIR (true/false) — Create a %Month% subfolder for the notes?
+# 
+#   C_NOTES_FORMAT (txt, md, whatever) — File extension (what goes after the . (dot) in the filenames)
+# 
+#   C_NOTES_TEMPLATE (/path/to/file) — A template for the new notes
+# 
+# The End. Easy — wins!
 
-# TODO: Somehow shield (\) ', ", (), [], `, !, and other stuff.
-# Bash does that even before the args are passed into the script, so idk.
+######
+#########################
+### BASIC PREPARATION ###
+#########################
+######
 
 ##
 # Stopping at the first error
 ##
+
 set -e
 
 ##
-# Getting date and time
+# Checking an incorrect bash version
 ##
-readonly NOTES_DATE=($(date '+%Y %m %d'))
-readonly NOTES_Y="${NOTES_DATE[0]}"
-readonly NOTES_M="${NOTES_DATE[1]}"
-readonly NOTES_D="${NOTES_DATE[2]}"
 
-##
-# EDIT: Change this to your favourite text file format
-##
-readonly NOTES_FORMAT='md'
-
-##
-# EDIT: Remove this section, if you've already set EDITOR, or don't want to use (Neo)Vim.
-#              vvvv
-##
-vimDerivative='nvim'
-
-if [ -z "$(which nvim)" ]; then
-    if [ -z "$(which vim)" ]; then
-        vimDerivative='vi'
-    else
-        vimDerivative='vim'
-    fi
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+    echo "Your bash version is:  '${BASH_VERSION}', but this script needs at least 4th."
+    echo "Please, consider updating"
+    exit 1
 fi
 
-readonly NOTES_EDITOR="${EDITOR:-"$vimDerivative"}"
 ##
-#              ^^^^
-# EDIT: Remove this section, if you've already set EDITOR, or don't want to use (Neo)Vim.
+# Getting back into the repo, if possible
 ##
 
-##
-# EDIT: Change the NOTES_CUSTOM_DIRECTORY to your liking
-# To check the contents of the HOME variable:
-# echo $HOME
-##
-readonly NOTES_CUSTOM_DIRECTORY="${HOME}/LECS/notes/${NOTES_Y}/${NOTES_M}"
-readonly NOTES_DIRECTORY="${NOTES_DIRECTORY:-"$NOTES_CUSTOM_DIRECTORY"}"
+cd "$(dirname "$(realpath "$0")")"
 
-##
-# Setting file and final path to it
-##
-readonly NOTES_FILE="${NOTES_D}.${NOTES_FORMAT}"
-readonly NOTES_PATH="${NOTES_DIRECTORY}/${NOTES_FILE}"
+if [ "$(git rev-parse --is-inside-work-tree 2> /dev/null)" = "true" ]; then
+    cd "$(git rev-parse --show-toplevel)"
+fi
 
-##
-# Checking if NOTES_DIRECTORY exists
-##
-if [ ! -d "${NOTES_DIRECTORY}" ]; then
+######
+######################
+### MISC FUNCTIONS ###
+######################
+######
+
+True=0
+False=1
+
+isFile() {
+    local target="$1"
+
+    if [ -f "${target}" ]; then
+        return $True
+    fi
+
+    return $False
+}
+
+isNotFile() {
+    local target="$1"
+
+    if isFile "${target}"; then
+        return $False
+    fi
+
+    return $True
+}
+
+isDir() {
+    local target="$1"
+
+    if [ -d "${target}" ]; then
+        return $True
+    fi
+
+    return $False
+}
+
+isNotDir() {
+    local target="$1"
+
+    if isDir "${target}"; then
+        return $False
+    fi
+
+    return $True
+}
+
+askBeforeCreatingDir() {
+    local target="$1"
+
+    if isDir "${target}"; then
+        return $True
+    fi
+
     while :; do
-        read -rp "${NOTES_DIRECTORY} does not exist, do you want to create it? (y/n) " yn
+        read -rp "${target} does not exist, do you want to create it? (y/n) " yn
         case "${yn}" in
-            [Yy]* ) mkdir -p "${NOTES_DIRECTORY}"; break;;
+            [Yy]* ) mkdir -p "${target}"; break;;
             [Nn]* ) exit;;
             * ) echo "Please answer y or n";;
         esac
     done
+}
+
+removeSuffix() {
+    local string="$1"
+    local suffix="$2"
+
+    echo "${string%$suffix*}"
+}
+
+removePrefix() {
+    local string="$1"
+    local prefix="$2"
+
+    echo "${string#*$prefix}"
+}
+
+getNotesSubEntity() {
+    local ySubdir="$1"
+    local mSubdir="$2"
+
+    local yText="$3"
+    local mText="$4"
+
+    # Either '/' or '_'
+    local divider="$5"
+    local result=""
+
+    if [ "${mSubdir}" = "true" ]; then
+        result="${mText}${divider}${result}"
+    fi
+
+    if [ "${ySubdir}" = "true" ]; then
+        result="${yText}${divider}${result}"
+    fi
+
+    # Worthless...
+    # if [ ! -z "${result}" ]; then
+    #     echo "${result}${divider}"
+    #     return 0
+    # fi
+
+    echo "$result"
+}
+
+######
+#####################
+### CONFIGURATION ###
+#####################
+######
+
+##
+# Assigning configuration-dependent constants their default values
+# DO NOT CHANGE IT HERE, THERE IS config.sh IN THE SAME FOLDER FOR THAT PURPOSE
+##
+
+# Top-level directory for all the notes
+C_NOTES_DIR="${HOME}/Notes"
+
+# Use a specific editor for the notes edit
+C_NOTES_EDITOR=""
+
+if [ -n "$(which nano)" ]; then
+    C_NOTES_EDITOR="nano"
+else
+    C_NOTES_EDITOR="vi"
+fi
+
+# Delimiter between the separated notes inside today's note file
+C_NOTES_DELIMITER="\n---\n"
+
+# Create a %Year% subfolder for the notes?
+C_NOTES_Y_SUBDIR="true"
+
+# Create a %Year% subfolder for the notes?
+C_NOTES_Y_SUBDIR="true"
+
+# Create a %Month% subfolder for the notes?
+C_NOTES_M_SUBDIR="true"
+
+# File extension (what goes after the . in the filenames)
+C_NOTES_FORMAT="md"
+
+# A /path/to/template file for the new notes
+C_NOTES_TEMPLATE="template"
+
+##
+# If configuration exists, use it
+##
+
+# (change only if you know, what you're doing)
+C_NOTES_CONFIG="config.sh"
+
+if [ -f "${C_NOTES_CONFIG}" ]; then
+    source "${C_NOTES_CONFIG}"
+fi
+
+######
+############
+### MAIN ###
+############
+######
+
+##
+# Fetching day number, month number and a year number
+##
+
+mapfile -t C_NOTES_DATE < <(date '+%Y %m %d')
+readonly C_NOTES_Y="${C_NOTES_DATE[0]}"
+readonly C_NOTES_M="${C_NOTES_DATE[1]}"
+readonly C_NOTES_D="${C_NOTES_DATE[2]}"
+
+##
+# Setting file and final path to it
+##
+
+C_NOTES_T_PATH="$( \
+    getNotesSubEntity \
+    "${C_NOTES_Y_SUBDIR}" \
+    "${C_NOTES_M_SUBDIR}" \
+    "${C_NOTES_Y}" \
+    "${C_NOTES_M}" \
+    '/')"
+
+C_NOTES_T_FILE="$( \
+    getNotesSubEntity \
+    "${C_NOTES_Y_SUBDIR}" \
+    "${C_NOTES_M_SUBDIR}" \
+    "${C_NOTES_Y}" \
+    "${C_NOTES_M}" \
+    '_')"
+
+if [ "${C_NOTES_DIR: -1}" != "/" ]; then
+    C_NOTES_T_PATH="/${C_NOTES_T_PATH}"
+fi
+
+readonly C_NOTES_PATH="${C_NOTES_DIR}${C_NOTES_T_PATH}"
+readonly C_NOTES_FILE="${C_NOTES_T_FILE}${C_NOTES_D}.${C_NOTES_FORMAT}"
+
+readonly C_NOTES_FILEPATH="${C_NOTES_PATH}${C_NOTES_FILE}"
+
+##
+# Checking if C_NOTES_DIR exists,
+# and trying to create it if it's not
+##
+
+askBeforeCreatingDir "${C_NOTES_DIR}"
+
+##
+# Create all intermediate folders
+##
+
+if isNotDir "${C_NOTES_PATH}"; then
+    mkdir -p "${C_NOTES_PATH}"
 fi
 
 ##
-# Check if file is empty or consists only of space characters
+# Checking if file is empty or consists only of space characters
 # If so, clean up and remember not to add an '---' prefix before the note itself,
 # because it would be a first note in the file
 ##
-touch "${NOTES_PATH}"  # Update the time stamp and create a file, if it's missing.
 
-prefix='\n---\n'
-if [ $(cat "${NOTES_PATH}" | grep -c '\S') -lt 1 ]; then
-    prefix=''
-fi
+if isNotFile "${C_NOTES_FILEPATH}"; then
 
-##
-# Debugging section
-#           vvvvvvv
-##
-echoList() {
-    local args=("$@")
-    for arg in "${args[@]}"; do
-        echo "$arg"
-    done
-}
+    if isFile "${C_NOTES_TEMPLATE}"; then
 
-logAndExit() {
-    echoList \
-        "Directory: $NOTES_DIRECTORY" \
-        "File: $NOTES_FILE" \
-        "Format: $NOTES_FORMAT" \
-        "Path: $NOTES_PATH" \
-        "Editor: $NOTES_EDITOR" \
-       "Prefix: $prefix"
-    exit 0
-}
+        # Use a template, if it exists
+        cat "${C_NOTES_TEMPLATE}" > "${C_NOTES_FILEPATH}"
 
-# Print out most of variables to visually
-# check their values and exit before
-# trying to write a note somewhere
-# (not an autotest, I know :)
-#logAndExit
-
-##
-#           ^^^^^^^
-# Debugging section
-##
-
-##
-# Try to get arguments from stdin and append them OR launch an editor directly
-# Otherwise, append current arguments to the file
-##
-if [ ${#} -eq 0 ]; then
-    if [ -p "/dev/stdin" ]; then
-        (echo -en "${prefix}\n"; cat; echo -en "\n") >> "${NOTES_PATH}"
     else
-        eval "${NOTES_EDITOR}" "${NOTES_PATH}"
+
+        # Update the time stamp and create a file.
+        touch "${C_NOTES_FILEPATH}"
+     
+        # Remove the delimiter, because the file is empty
+        C_NOTES_DELIMITER=""
+
     fi
-else
-    echo -en "${prefix}\n${*}\n" >> "${NOTES_PATH}"
 fi
+
+##
+# Trying to append current arguments to the file
+# and exit!
+##
+
+if [ "${#}" -ne 0 ]; then
+    echo -en "${C_NOTES_DELIMITER}\n${*}\n" >> "${C_NOTES_FILEPATH}"
+
+    exit 0
+fi
+
+##
+# Trying to get arguments from stdin and append them
+# and exit!
+##
+
+if [ -p "/dev/stdin" ]; then
+    (echo -en "${C_NOTES_DELIMITER}\n"; cat; echo -en "\n") >> "${C_NOTES_FILEPATH}"
+
+    exit 0
+fi
+
+##
+# Clear stdin, no args,
+# just launching C_NOTES_EDITOR
+##
+
+eval "${C_NOTES_EDITOR}" "${C_NOTES_FILEPATH}"
+
+##
+# Exit!
+##
+
+exit 0
 
 ##
 # P.S.: Please, give me a star, if you like it.
 # Proceed to: https://github.com/novusnota/notes.sh
 ##
 
-# TODO: Be aware, that )('"!` are not escaped by default just because bash
+##
+# Possible To-Do's
+##
+
+# Be aware, that )('"!` are not escaped by default just because bash
 # handles args before they get into the script. Possible fix: ncurses.
+#
+# TODO: Somehow shield (\) ', ", (), [], `, !, and other stuff.
+
 # TODO: Auto-find links (by regex) and change them
 # from <space>link<space> to <space>[](link)<space>
+
