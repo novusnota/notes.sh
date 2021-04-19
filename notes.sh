@@ -7,7 +7,7 @@
 #    #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
 #
 #         See: https://github.com/novusnota/notes.sh
-#                     Version: 2.0.4
+#                     Version: 2.0.5
 #
 # Create a dated text file at a specific location and append text to it.
 #
@@ -180,6 +180,21 @@ getNotesSubEntity() {
     local divider="$5"
     local result=""
 
+    if [ "${divider}" = "_" ]; then
+
+        if [ "${mSubdir}" != "true" ]; then
+            result="${mText}${divider}${result}"
+        fi
+
+        if [ "${ySubdir}" != "true" ]; then
+            result="${yText}${divider}${result}"
+        fi
+
+        echo "$result"
+
+        return 0
+    fi
+
     if [ "${mSubdir}" = "true" ]; then
         result="${mText}${divider}${result}"
     fi
@@ -196,6 +211,8 @@ getNotesSubEntity() {
 
     echo "$result"
 }
+
+# separated function for the files (because they should decrease)
 
 ######
 #####################
@@ -259,7 +276,7 @@ fi
 # Fetching day number, month number and a year number
 ##
 
-mapfile -t C_NOTES_DATE < <(date '+%Y %m %d')
+readonly C_NOTES_DATE=($(date '+%Y %m %d'))
 readonly C_NOTES_Y="${C_NOTES_DATE[0]}"
 readonly C_NOTES_M="${C_NOTES_DATE[1]}"
 readonly C_NOTES_D="${C_NOTES_DATE[2]}"
