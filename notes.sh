@@ -7,7 +7,7 @@
 #    #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
 #
 #         See: https://github.com/novusnota/notes.sh
-#                     Version: 2.0.5
+#                     Version: 2.1.0
 #
 # Create a dated text file at a specific location and append text to it.
 #
@@ -40,6 +40,8 @@
 #
 # Customization:
 #   Set the variables of config.sh to your liking.
+#   For your ease of use, there is already an config.example.sh —
+#   just rename it to config.sh and you're good to go!
 #
 #   C_NOTES_DIR (/path/to/notes/directory) — Top-level directory for all the notes
 # 

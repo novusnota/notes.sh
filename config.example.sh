@@ -21,6 +21,3 @@ export C_NOTES_FORMAT="md"
 # (optional) A /path/to/template file for the new notes
 export C_NOTES_TEMPLATE="template"
 
-# (CHANGE ONLY IF YOU KNOW, WHAT YOU'RE DOING) Export args, if any
-test "${#}" -ne 0 && export "${@}"
-
