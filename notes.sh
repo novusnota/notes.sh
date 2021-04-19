@@ -31,7 +31,7 @@
 #   $ xsel -bo | note                       (appends your clipboard to the file)
 #   $ note                                  (opens the file in your editor)
 #
-#   pb-paste, xclip, tmux-copy-paste or clip can easily be used instead of xsel.
+#   pbpaste, xclip, tmux-copy-paste or clip can easily be used instead of xsel.
 #
 # Produces:
 #   DD.md inside $HOME/Notes/YYYY/MM
@@ -44,19 +44,19 @@
 #   just rename it to config.sh and you're good to go!
 #
 #   C_NOTES_DIR (/path/to/notes/directory) — Top-level directory for all the notes
-# 
+#
 #   C_NOTES_EDITOR (nvim, nano, sublime, whatever) — Use an editor to change today's note file manually
-# 
+#
 #   C_NOTES_DELIMITER (\n---\n, for example) Delimiter between the separated notes inside today's note file
 #
 #   C_NOTES_Y_SUBDIR (true/false) — Create a %Year% subfolder for the notes?
-# 
+#
 #   C_NOTES_M_SUBDIR (true/false) — Create a %Month% subfolder for the notes?
-# 
+#
 #   C_NOTES_FORMAT (txt, md, whatever) — File extension (what goes after the . (dot) in the filenames)
-# 
+#
 #   C_NOTES_TEMPLATE (/path/to/file) — A template for the new notes
-# 
+#
 # The End. Easy — wins!
 
 ######
@@ -344,7 +344,7 @@ if isNotFile "${C_NOTES_FILEPATH}"; then
 
         # Update the time stamp and create a file.
         touch "${C_NOTES_FILEPATH}"
-     
+
         # Remove the delimiter, because the file is empty
         C_NOTES_DELIMITER=""
 

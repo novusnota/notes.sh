@@ -2,8 +2,8 @@
   <h1 style="border-bottom: none !important;">📝 notes.sh</h1>
   <p>
 <pre>
-                m                                #    
-m mm    mmm   mm#mm   mmm    mmm           mmm   # mm 
+                m                                #
+m mm    mmm   mm#mm   mmm    mmm           mmm   # mm
 #"  #  #" "#    #    #"  #  #   "         #   "  #"  #
 #   #  #   #    #    #""""   """m          """m  #   #
 #   #  "#m#"    "mm  "#mm"  "mmm"    #    "mmm"  #   #
@@ -37,9 +37,15 @@ Create a dated text file at a specific location and append text to it. It's that
 Works literally on every Linux-like system. And probably should work on MacOS.
 If not, please open an [issue](https://github.com/novusnota/notes.sh/issues).
 
+###### NOTE (unintended pun):
+
+Some features, such as: custom note creation template
+or dynamic folder resolution rely on git installed
+and on a .git folder inside of this repo.
+
 ## 🤟 Getting Started
 
-### 1. Download the script
+#### 1. Download the script
 
 Using curl:
 
@@ -49,7 +55,7 @@ curl -L https://raw.githubusercontent.com/novusnota/notes.sh/master/notes.sh
 
 Or grab it from the latest [Release](https://github.com/novusnota/notes.sh/releases/latest)
 
-### 2. Installing
+#### 2. Installing
 
 There are at least two ways:
 
@@ -58,24 +64,26 @@ There are at least two ways:
 Example:
 
 ```bash
-alias note='path/to/somethere/with/notes.sh'
+alias note='path/to/somewhere/with/notes.sh'
 ```
 
-2. Place it in your PATH with the name 'note'
+2. Create a symbolic link somewhere on your PATH.
 
 Examples:
 
 ```
 # If you have a ~/.local/bin on your PATH
-mv notes.sh ~/.local/bin/note
+ln -s /path/to/somewhere/with/notes.sh ~/.local/bin/note
 
 # Preferred way, would work on pretty much every Linux
-sudo mv notes.sh /usr/local/sbin/note
+sudo ln -s /path/to/somewhere/with/notes.sh /usr/local/sbin/note
 
 # MacOS way:
 ## don't know much, but the principle is the same:
-## get to know your PATH and place the notes.sh somewhere in that folders
-## to print out PATH:
+## get to know your PATH and create a link to notes.sh
+## somewhere in that folders
+##
+## To print out PATH use:
 echo $PATH | tr : '\n'
 ```
 
@@ -119,12 +127,42 @@ cat <<EOF | note
 note \
     blah blah \
     more blah blah \
-    the end. bye-bye!
+    the end. bye-bye\!
 # note (xD), that tabs are not required.
+# also keep in mind, that Bash handles args before they get into the script
+# and some characters like !@`#\ should be escaped, and some '" should match their pairs.
+#
+# to escape a character, append a backwards slash before it like so:
+# \!
 ```
 
-Either way command produces a file called DD.md (with the current month day name)
-to the $NOTES\_DIRECTORY/YYYY/MM. If the file exists, notes.sh will append to it.
+Either way command creates a file called DD.md
+in the $C\_NOTES\_DIR/YYYY/MM. If the file exists, notes.sh will append to it.
+
+Destination folder, filename and other things can be changed using a configuration file, see Customization below.
+
+## 🔧 Customization
+
+Set the variables of config.sh to your liking.
+
+For your ease of use, there is already an config.example.sh —
+just rename it to config.sh and you're good to go!
+
+#### Variables
+
+- C\_NOTES\_DIR (/path/to/notes/directory) — Top-level directory for all the notes
+
+- C\_NOTES\_EDITOR (nvim, nano, sublime, whatever) — Use an editor to change today's note file manually
+
+- C\_NOTES\_DELIMITER (\n---\n, for example) Delimiter between the separated notes inside today's note file
+
+- C\_NOTES\_Y\_SUBDIR (true/false) — Create a %Year% subfolder for the notes?
+
+- C\_NOTES\_M\_SUBDIR (true/false) — Create a %Month% subfolder for the notes?
+
+- C\_NOTES\_FORMAT (txt, md, whatever) — File extension (what goes after the . (dot) in the filenames)
+
+- C\_NOTES\_TEMPLATE (/path/to/file) — A template for the new notes
 
 ## 🍀 Acknowledgements
 
